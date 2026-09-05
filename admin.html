@@ -9,8 +9,6 @@
   <style>
     body { background: var(--navy-900); }
     .admin-wrap { max-width: 1100px; margin: 0 auto; padding: 24px 16px 72px; }
-    .admin-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
-    .admin-top h1 { font-size: 22px; margin: 0; }
     .muted { color: var(--muted); font-size: 13px; }
     details.card > summary { cursor: pointer; font-weight: 700; padding: 14px 18px; }
     .card { margin-bottom: 16px; }
@@ -26,7 +24,8 @@
     #msg { font-size: 13px; min-height: 20px; }
     #msg.err { color: #ff8f8f; }
     #msg.ok { color: #8fe0a0; }
-    .login-card { max-width: 540px; margin: 6vh auto 0; }
+    .unlock-overlay { position: fixed; inset: 0; z-index: 999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.7); }
+    .unlock-card { max-width: 380px; width: 100%; }
     .hidden { display: none !important; }
     textarea.code { width: 100%; min-height: 220px; font-family: Consolas, monospace; font-size: 12px; background: rgba(0,0,0,.4); color: #d6f5d6; border: 1px solid rgba(255,255,255,.2); border-radius: 6px; padding: 8px; }
     .two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
@@ -37,28 +36,18 @@
 <body>
   <div class="admin-wrap">
 
-    <!-- Login -->
-    <div id="loginView" class="card login-card">
-      <div class="card__body">
-        <h1>Independent FC — Admin</h1>
-        <p class="muted">Connect with a GitHub token that can write to the repo. That unlocks the editors and lets you publish changes straight to the live site.</p>
-        <div class="field"><label for="repo">Repository</label><input id="repo" type="text" value="gts2026mm-prog/IndependentFC"></div>
-        <div class="field"><label for="token">GitHub token</label><input id="token" type="password" placeholder="Fine-grained token (ghp_ / github_pat_...)" autocomplete="off"></div>
-        <div class="row-actions">
-          <button id="connectBtn" class="btn btn--gold" type="button">Connect</button>
+    <!-- Unlock overlay -->
+    <div id="unlockOverlay" class="unlock-overlay">
+      <div class="card unlock-card">
+        <div class="card__body">
+          <h1>Independent FC — Admin</h1>
+          <p class="muted">Enter the admin password to unlock the editor.</p>
+          <div class="field"><label for="pass">Password</label><input id="pass" type="password" autocomplete="off"></div>
+          <div class="row-actions">
+            <button id="unlockBtn" class="btn btn--gold" type="button">Unlock</button>
+          </div>
+          <p class="muted" style="margin-top:12px;"><a href="index.html" style="color:var(--gold-500);">← Back to the site</a></p>
         </div>
-        <details style="margin-top:14px;">
-          <summary class="muted">How to create a token (2 minutes)</summary>
-          <ol class="muted">
-            <li>Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener" style="color:var(--gold-500);">github.com/settings/personal-access-tokens/new</a></li>
-            <li>Token name: <b>ifc-admin</b> · Expiration: your choice</li>
-            <li>Repository access → <b>Only select repositories</b> → choose <b>IndependentFC</b></li>
-            <li>Permissions → <b>Contents: Read and write</b> → Create token</li>
-            <li>Copy the token and paste it above.</li>
-          </ol>
-          <p class="muted">The token is stored only in this browser (localStorage) and is only ever sent to api.github.com. Only use this page on a device you trust.</p>
-        </details>
-        <p class="muted" style="margin-top:12px;"><a href="index.html" style="color:var(--gold-500);">← Back to the site</a></p>
       </div>
     </div>
 
@@ -68,8 +57,8 @@
         <div id="msg"></div>
         <div class="row-actions" style="margin:0;">
           <a class="btn btn--sm btn--outline" href="index.html" target="_blank" rel="noopener">View site</a>
-          <button id="saveBtn" class="btn btn--sm btn--gold" type="button">Save &amp; publish</button>
-          <button id="logOutBtn" class="btn btn--sm btn--outline" type="button">Disconnect</button>
+          <button id="downloadBtn" class="btn btn--sm btn--gold" type="button">Download data.js</button>
+          <button id="lockBtn" class="btn btn--sm btn--outline" type="button">Lock</button>
         </div>
       </div>
 
@@ -126,7 +115,7 @@
       <details class="card">
         <summary>Raw JSON (advanced)</summary>
         <div class="card__body">
-          <p class="muted">The full data object. Leave it alone unless you know what you're doing — the forms above feed into it on save.</p>
+          <p class="muted">Full data object. Edits here override the forms on download.</p>
           <textarea id="advanced" class="code" spellcheck="false"></textarea>
           <div class="row-actions">
             <button id="advLoad" class="btn btn--sm btn--outline" type="button">Sync from forms</button>
@@ -135,7 +124,7 @@
         </div>
       </details>
 
-      <p class="muted">Saving writes to <code>js/data.js</code> on GitHub; the Pages site redeploys automatically (about 1 minute). Language translations live in <code>js/i18n.js</code> and are edited separately.</p>
+      <p class="muted">Download an updated <code>data.js</code> file, then send it to me or drop it into <code>D:\IndependentFC\js\data.js</code> and I'll push it live. Language translations live in <code>js/i18n.js</code> and are edited separately.</p>
     </div>
   </div>
 
