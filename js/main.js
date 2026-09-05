@@ -254,6 +254,13 @@
       '</div>';
   }
 
+  function renderSocialFeed() {
+    var el = $("#socialFeed");
+    if (el && data.social && data.social.feedCode) {
+      el.innerHTML = data.social.feedCode;
+    }
+  }
+
   /* ---------- Forms ---------- */
   function initForms() {
     $$("form[data-newsletter], form[data-contact]").forEach(function (form) {
@@ -280,6 +287,7 @@
     renderSquad();
     renderMembership();
     renderPartner();
+    renderSocialFeed();
   }
 
   function initTheme() {

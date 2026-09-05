@@ -111,5 +111,6 @@ IFC.membership = [
 IFC.social = {
   facebook: "https://www.facebook.com/profile.php?id=61581583439195",
   tiktok: "https://tiktok.com/@independentfc",
-  youtube: "https://youtube.com/@independentfc"
+  youtube: "https://youtube.com/@independentfc",
+  feedCode: ""
 };

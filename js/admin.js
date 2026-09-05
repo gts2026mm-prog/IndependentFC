@@ -138,6 +138,8 @@
     renderBoundForm("#socialForm", s, [
       ["facebook", "Facebook URL", "url"], ["tiktok", "TikTok URL", "url"], ["youtube", "YouTube URL", "url"]
     ]);
+    /* Special textarea for the embed code */
+    $("#socialForm").innerHTML += '<div class="field"><label for="b_feedCode">Facebook Feed Embed Code</label><textarea id="b_feedCode" data-bind="feedCode">' + esc(s.feedCode || "") + '</textarea></div>';
   }
 
   /* ==================== Editable grids ==================== */
