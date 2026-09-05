@@ -282,10 +282,23 @@
     renderPartner();
   }
 
+  function initTheme() {
+    var el = document.documentElement;
+    var theme = localStorage.getItem("ifc-theme") || "light";
+    el.setAttribute("data-theme", theme);
+    var toggle = $("#themeToggle");
+    if(toggle) toggle.addEventListener("click", function() {
+      var newTheme = el.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      el.setAttribute("data-theme", newTheme);
+      localStorage.setItem("ifc-theme", newTheme);
+    });
+  }
+
   function init() {
     initNav();
     initActiveNav();
     initSocials();
+    initTheme();
     reRender();
     initForms();
     document.addEventListener("ifc:langchange", reRender);

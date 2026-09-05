@@ -109,7 +109,7 @@ IFC.membership = [
 
 /* ---------- Social links ---------- */
 IFC.social = {
-  facebook: "https://facebook.com/independentfc",
+  facebook: "https://www.facebook.com/profile.php?id=61581583439195",
   tiktok: "https://tiktok.com/@independentfc",
   youtube: "https://youtube.com/@independentfc"
 };
