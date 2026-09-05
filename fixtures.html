@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fixtures &amp; Results — Independent Football Club</title>
+  <meta name="description" content="Independent FC fixtures, results and the latest Carabao 7-a-side 2026 table. Keep up to date with every matchday.">
+  <link rel="icon" href="assets/img/crest.png">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="container">
+      <div class="topbar__links"><a href="membership.html" data-i18n="topbar_membership">Membership</a></div>
+      <div class="topbar__lang" id="langSwitch"></div>
+      <div class="topbar__socials" data-socials></div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="index.html">
+        <img class="brand__crest" src="assets/img/crest.png" alt="Independent FC crest">
+        <div class="brand__name"><strong>Independent FC</strong><span>The Independents</span></div>
+      </a>
+      <nav class="nav" id="siteNav" aria-label="Main navigation">
+        <a href="index.html" data-i18n="nav_home">Home</a>
+        <a href="about.html" data-i18n="nav_club">Club</a>
+        <a href="team.html" data-i18n="nav_squad">Squad</a>
+        <a href="fixtures.html" data-i18n="nav_fixtures">Fixtures</a>
+        <a href="sponsors.html" data-i18n="nav_partners">Partners</a>
+        <a href="contact.html" data-i18n="nav_contact">Contact</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html" data-i18n="bc_home">Home</a> / <span data-i18n="nav_fixtures">Fixtures</span></div>
+      <h1 data-i18n="fixt_hero_title">Fixtures &amp; Results</h1>
+      <p data-i18n="fixt_hero_p">Every match, every score, every climb up the table — track the Independents across the season.</p>
+      <div class="comp-badge"><img src="assets/img/carabao-logo.png" alt="Carabao logo"><span>Carabao 7-a-side 2026</span></div>
+    </div>
+  </section>
+
+  <!-- Upcoming fixtures -->
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow" data-i18n="e_upcoming">Coming Up</span>
+      <h2 data-i18n="h_upcoming">Upcoming Fixtures</h2>
+      <div class="table-wrap mt-2">
+        <table>
+          <thead><tr><th data-i18n="th_date">Date</th><th data-i18n="th_comp">Competition</th><th data-i18n="th_match">Match</th><th data-i18n="th_venue">Venue</th><th data-i18n="th_status">Status</th></tr></thead>
+          <tbody id="fixturesList"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- League table -->
+  <section class="section section--alt">
+    <div class="container">
+      <span class="eyebrow" data-i18n="e_standings">League Standings</span>
+      <div class="comp-title"><img src="assets/img/carabao-logo.png" alt="Carabao logo"><h2>Carabao 7-a-side 2026</h2></div>
+      <p style="color:var(--muted);" data-i18n="tbl_note">As of Matchday 5 · Independent FC sit top of the table.</p>
+      <div class="table-wrap mt-2">
+        <table>
+          <thead><tr><th>#</th><th data-i18n="th_team">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th data-i18n="th_pts">Pts</th></tr></thead>
+          <tbody id="leagueTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Past results -->
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow" data-i18n="e_recent">Recent Form</span>
+      <h2 data-i18n="h_results">Past Results</h2>
+      <div class="table-wrap mt-2">
+        <table>
+          <thead><tr><th data-i18n="th_date">Date</th><th data-i18n="th_comp">Competition</th><th data-i18n="th_home">Home</th><th data-i18n="th_score">Score</th><th data-i18n="th_away">Away</th><th data-i18n="th_scorers">Scorers</th></tr></thead>
+          <tbody id="resultsList"></tbody>
+        </table>
+      </div>
+      <p class="mt-2" style="color:var(--muted);" data-i18n="legend">W — Win · D — Draw · L — Loss</p>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container">
+      <h2 data-i18n="cta_live_h">See It Live</h2>
+      <p data-i18n="cta_live_p">Follow the Independents all season long. Join as a member and never miss a kick.</p>
+      <a class="btn btn--navy" href="membership.html" data-i18n="hero_cta_member">Become a Member</a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__main">
+        <div>
+          <div class="footer-brand">
+            <img class="brand__crest" src="assets/img/crest.png" alt="Independent FC crest">
+            <div class="brand__name"><strong style="color:#fff;">Independent FC</strong><span>The Independents</span></div>
+          </div>
+          <p>Independent Football Club is a community-owned club competing in the Carabao 7-a-side 2026. Forged by the city. United by pride.</p>
+          <div class="site-footer__socials" data-socials></div>
+        </div>
+        <div>
+          <h4 data-i18n="footer_theclub">The Club</h4>
+          <a href="about.html" data-i18n="footer_about_history">About &amp; History</a><a href="team.html" data-i18n="footer_first_team">First Team</a><a href="fixtures.html" data-i18n="footer_fixtures_results">Fixtures &amp; Results</a><a href="sponsors.html" data-i18n="nav_partners">Partners</a>
+        </div>
+        <div>
+          <h4 data-i18n="footer_supporters">Supporters</h4>
+          <a href="membership.html" data-i18n="topbar_membership">Membership</a><a href="contact.html" data-i18n="nav_contact">Contact</a>
+        </div>
+        <div>
+          <h4 data-i18n="footer_matchday">Matchday</h4>
+          <p><strong style="color:#fff;" data-i18n="footer_park">Independence Park</strong><br><span data-i18n="footer_capacity">12,500 capacity</span><br><span data-i18n="footer_est1982">Est. 1982</span></p>
+          <p><span data-i18n="footer_kickoff">Kick-off:</span> <strong style="color:#fff;">15:00</strong> · <a href="contact.html" style="color:var(--gold-500);" data-i18n="footer_directions">Directions</a></p>
+        </div>
+      </div>
+      <div class="site-footer__bottom">
+        <span data-i18n="footer_rights">© 2026 Independent Football Club. All rights reserved.</span>
+        <span>Navy &amp; Gold · Est. 1978</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

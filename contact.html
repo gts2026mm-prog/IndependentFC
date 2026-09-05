@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Independent Football Club</title>
+  <meta name="description" content="Contact Independent Football Club. Stadium address, directions, contact form and social media links.">
+  <link rel="icon" href="assets/img/crest.png">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="container">
+      <div class="topbar__links"><a href="membership.html" data-i18n="topbar_membership">Membership</a></div>
+      <div class="topbar__lang" id="langSwitch"></div>
+      <div class="topbar__socials" data-socials></div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="index.html">
+        <img class="brand__crest" src="assets/img/crest.png" alt="Independent FC crest">
+        <div class="brand__name"><strong>Independent FC</strong><span>The Independents</span></div>
+      </a>
+      <nav class="nav" id="siteNav" aria-label="Main navigation">
+        <a href="index.html" data-i18n="nav_home">Home</a>
+        <a href="about.html" data-i18n="nav_club">Club</a>
+        <a href="team.html" data-i18n="nav_squad">Squad</a>
+        <a href="fixtures.html" data-i18n="nav_fixtures">Fixtures</a>
+        <a href="sponsors.html" data-i18n="nav_partners">Partners</a>
+        <a href="contact.html" data-i18n="nav_contact">Contact</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html" data-i18n="bc_home">Home</a> / <span data-i18n="nav_contact">Contact</span></div>
+      <h1 data-i18n="contact_hero_title">Contact &amp; Location</h1>
+      <p data-i18n="contact_hero_p">Find us at Independence Park, drop us a line, or say hello on social.</p>
+    </div>
+  </section>
+
+  <!-- Stadium address + map -->
+  <section class="section">
+    <div class="container">
+      <div class="contact-grid">
+        <div>
+          <span class="eyebrow" data-i18n="e_fortress">The Fortress</span>
+          <h2 data-i18n="footer_park">Independence Park</h2>
+          <ul class="feature-list">
+            <li><span>📍</span><div><strong data-i18n="feat_addr_t">Address</strong><span><span data-i18n="feat_addr_d">Independence Park, Stadium Way,<br>City Centre</span></div></li>
+            <li><span>🚗</span><div><strong data-i18n="feat_travel_t">Travel</strong><span><span data-i18n="feat_travel_d">10 mins from the central station. On-street and matchday parking available.</span></div></li>
+            <li><span>🎫</span><div><strong data-i18n="feat_ticket_t">Ticket Office</strong><span>+1 (555) 010-1978<br>tickets@independentfc.club</span></div></li>
+            <li><span>✉️</span><div><strong data-i18n="feat_general_t">General</strong><span><span data-i18n="feat_general_d">hello@independentfc.club</span></div></li>
+          </ul>
+          <div class="site-footer__socials" data-socials style="margin-top:8px;"></div>
+          <p class="mt-2" style="color:var(--muted);" data-i18n="follow_p">Follow us for live updates, behind-the-scenes and this week's team news.</p>
+        </div>
+        <div>
+          <iframe class="map-embed" title="Map to Independence Park"
+            src="https://maps.google.com/maps?q=stadium&z=13&output=embed"
+            loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact form -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="split">
+        <div>
+          <span class="eyebrow" data-i18n="e_touch">Get in Touch</span>
+          <h2 data-i18n="h_message">Send Us a Message</h2>
+          <p class="lead" data-i18n="msg_lead">Questions about tickets, membership, the academy or partnerships? Drop us a line and a member of the team will reply within 48 hours.</p>
+        </div>
+        <form data-contact>
+          <div class="form-success" data-i18n="form_success">Thanks for your message! We'll be in touch soon.</div>
+          <div class="field"><label for="name" data-i18n="label_name">Name</label><input id="name" type="text" required placeholder="Your full name" data-i18n-placeholder="ph_name"></div>
+          <div class="field"><label for="email" data-i18n="label_email">Email</label><input id="email" type="email" required placeholder="you@example.com" data-i18n-placeholder="ph_email"></div>
+          <div class="field">
+            <label for="topic" data-i18n="label_topic">Topic</label>
+            <select id="topic">
+              <option data-i18n="opt_tickets">Tickets</option>
+              <option data-i18n="opt_membership">Membership</option>
+              <option data-i18n="opt_academy">Academy</option>
+              <option data-i18n="opt_shop">Shop</option>
+              <option data-i18n="opt_partnerships">Partnerships</option>
+              <option data-i18n="opt_press">Press / Media</option>
+              <option data-i18n="opt_other">Other</option>
+            </select>
+          </div>
+          <div class="field"><label for="message" data-i18n="label_message">Message</label><textarea id="message" required placeholder="How can we help?" data-i18n-placeholder="ph_message"></textarea></div>
+          <button type="submit" class="btn btn--gold" data-i18n="btn_send">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__main">
+        <div>
+          <div class="footer-brand">
+            <img class="brand__crest" src="assets/img/crest.png" alt="Independent FC crest">
+            <div class="brand__name"><strong style="color:#fff;">Independent FC</strong><span>The Independents</span></div>
+          </div>
+          <p>Independent Football Club is a community-owned club competing in the Carabao 7-a-side 2026. Forged by the city. United by pride.</p>
+          <div class="site-footer__socials" data-socials></div>
+        </div>
+        <div>
+          <h4 data-i18n="footer_theclub">The Club</h4>
+          <a href="about.html" data-i18n="footer_about_history">About &amp; History</a><a href="team.html" data-i18n="footer_first_team">First Team</a><a href="fixtures.html" data-i18n="footer_fixtures_results">Fixtures &amp; Results</a><a href="sponsors.html" data-i18n="nav_partners">Partners</a>
+        </div>
+        <div>
+          <h4 data-i18n="footer_supporters">Supporters</h4>
+          <a href="membership.html" data-i18n="topbar_membership">Membership</a><a href="contact.html" data-i18n="nav_contact">Contact</a>
+        </div>
+        <div>
+          <h4 data-i18n="footer_matchday">Matchday</h4>
+          <p><strong style="color:#fff;" data-i18n="footer_park">Independence Park</strong><br><span data-i18n="footer_capacity">12,500 capacity</span><br><span data-i18n="footer_est1982">Est. 1982</span></p>
+          <p><span data-i18n="footer_kickoff">Kick-off:</span> <strong style="color:#fff;">15:00</strong> · <a href="contact.html" style="color:var(--gold-500);" data-i18n="footer_directions">Directions</a></p>
+        </div>
+      </div>
+      <div class="site-footer__bottom">
+        <span data-i18n="footer_rights">© 2026 Independent Football Club. All rights reserved.</span>
+        <span>Navy &amp; Gold · Est. 1978</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

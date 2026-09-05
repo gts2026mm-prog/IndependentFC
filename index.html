@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Independent Football Club — The Independents | Home</title>
+  <meta name="description" content="Independent Football Club — a proud community football club. Match results, fixtures, squad, news, tickets and membership. Forged by the city. United by pride.">
+  <meta property="og:title" content="Independent Football Club">
+  <meta property="og:description" content="Forged by the city. United by pride. Fixtures, results, squad, tickets and membership for Independent FC.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/img/hero.svg">
+  <link rel="icon" href="assets/img/crest.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SportsClub",
+    "name": "Independent Football Club",
+    "sport": "Association Football",
+    "foundingDate": "1978",
+    "location": { "@type": "Place", "name": "Independence Park" }
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="container">
+      <div class="topbar__links"><a href="membership.html" data-i18n="topbar_membership">Membership</a></div>
+      <div class="topbar__lang" id="langSwitch"></div>
+      <div class="topbar__socials" data-socials></div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="index.html">
+        <img class="brand__crest" src="assets/img/crest.png" alt="Independent FC crest">
+        <div class="brand__name"><strong>Independent FC</strong><span>The Independents</span></div>
+      </a>
+      <nav class="nav" id="siteNav" aria-label="Main navigation">
+        <a href="index.html" data-i18n="nav_home">Home</a>
+        <a href="about.html" data-i18n="nav_club">Club</a>
+        <a href="team.html" data-i18n="nav_squad">Squad</a>
+        <a href="fixtures.html" data-i18n="nav_fixtures">Fixtures</a>
+        <a href="sponsors.html" data-i18n="nav_partners">Partners</a>
+        <a href="contact.html" data-i18n="nav_contact">Contact</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" style="--hero-img:url('assets/img/hero.svg')">
+    <div class="container">
+      <div class="hero__inner">
+        <span class="eyebrow"><img class="eyebrow-logo" src="assets/img/carabao-logo.png" alt="">Carabao 7-a-side 2026 · Est. 1978</span>
+        <h1><span data-i18n="hero_h1a">Forged by the City.</span><br><span data-i18n="hero_h1b">United by Pride.</span></h1>
+        <p class="lead" data-i18n="hero_lead">Independent Football Club is more than a team — it's the heartbeat of the community. Navy and gold runs deep. This is your club.</p>
+        <div class="hero__actions">
+          <a class="btn btn--gold" href="membership.html" data-i18n="hero_cta_member">Become a Member</a>
+          <a class="btn btn--white" href="about.html" data-i18n="hero_cta_story">Our Story</a>
+        </div>
+      </div>
+      <div class="hero__strip" id="heroMatch"></div>
+    </div>
+  </section>
+
+  <!-- Next fixture countdown -->
+  <section class="section section--tight">
+    <div class="container">
+      <span class="eyebrow" data-i18n="sec_next">Next Up</span>
+      <h2 data-i18n="sec_countdown_h">Countdown to Kick-off</h2>
+      <div class="countdown" id="countdown"></div>
+      <p class="mt-2" style="color:var(--muted);">Independent FC v Riverside Athletic · Independence Park</p>
+    </div>
+  </section>
+
+  <!-- Season stats -->
+  <section class="section section--alt">
+    <div class="container">
+      <span class="eyebrow" data-i18n="sec_season">2026/27 Season</span>
+      <h2 class="text-center" data-i18n="sec_rise">On the Rise</h2>
+      <div class="stat-row mt-2">
+        <div class="stat"><div class="stat__num">1st</div><div class="stat__label" data-i18n="stat_position">League Position</div></div>
+        <div class="stat"><div class="stat__num">13</div><div class="stat__label" data-i18n="stat_points">Points</div></div>
+        <div class="stat"><div class="stat__num">13</div><div class="stat__label" data-i18n="stat_scored">Goals Scored</div></div>
+        <div class="stat"><div class="stat__num">4</div><div class="stat__label" data-i18n="stat_conceded">Goals Conceded</div></div>
+        <div class="stat"><div class="stat__num">5</div><div class="stat__label" data-i18n="stat_clean">Clean Sheets</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Membership / CTA -->
+  <section class="cta">
+    <div class="container">
+      <h2 data-i18n="cta_h">Be Part of the Independents</h2>
+      <p data-i18n="cta_p">Membership and away travel — get closer to the action and support the club that supports the city.</p>
+      <a class="btn btn--navy" href="membership.html" data-i18n="cta_btn">Explore Membership</a>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="newsletter section">
+    <div class="container">
+      <h2 data-i18n="nl_h">Never Miss a Match</h2>
+      <p style="color:rgba(255,255,255,.8);max-width:60ch;" data-i18n="nl_p">Sign up to the Independent FC newsletter for match reports, ticket alerts and club announcements.</p>
+      <form class="newsletter__form" data-newsletter>
+        <input type="email" placeholder="Enter your email address" required aria-label="Email address" data-i18n-placeholder="nl_ph">
+        <button type="submit" class="btn btn--gold" data-i18n="nl_btn">Sign Up</button>
+      </form>
+      <p class="form-note" data-i18n="nl_note">We respect your inbox. Unsubscribe at any time.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__main">
+        <div>
+          <div class="footer-brand">
+            <img class="brand__crest" src="assets/img/crest.png" alt="Independent FC crest">
+            <div class="brand__name"><strong style="color:#fff;">Independent FC</strong><span>The Independents</span></div>
+          </div>
+          <p>Independent Football Club is a community-owned club competing in the Carabao 7-a-side 2026. Forged by the city. United by pride.</p>
+          <div class="site-footer__socials" data-socials></div>
+        </div>
+        <div>
+          <h4 data-i18n="footer_theclub">The Club</h4>
+          <a href="about.html" data-i18n="footer_about_history">About &amp; History</a>
+          <a href="team.html" data-i18n="footer_first_team">First Team</a>
+          <a href="fixtures.html" data-i18n="footer_fixtures_results">Fixtures &amp; Results</a>
+          <a href="sponsors.html" data-i18n="nav_partners">Partners</a>
+        </div>
+        <div>
+          <h4 data-i18n="footer_supporters">Supporters</h4>
+          <a href="membership.html" data-i18n="topbar_membership">Membership</a>
+          <a href="contact.html" data-i18n="nav_contact">Contact</a>
+        </div>
+        <div>
+          <h4 data-i18n="footer_matchday">Matchday</h4>
+          <p><strong style="color:#fff;" data-i18n="footer_park">Independence Park</strong><br><span data-i18n="footer_capacity">12,500 capacity</span><br><span data-i18n="footer_est1982">Est. 1982</span></p>
+          <p><span data-i18n="footer_kickoff">Kick-off:</span> <strong style="color:#fff;">15:00</strong> · <a href="contact.html" style="color:var(--gold-500);" data-i18n="footer_directions">Directions</a></p>
+        </div>
+      </div>
+      <div class="site-footer__bottom">
+        <span data-i18n="footer_rights">© 2026 Independent Football Club. All rights reserved.</span>
+        <span>Navy &amp; Gold · Est. 1978</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
