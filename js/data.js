@@ -15,7 +15,7 @@ IFC.club = {
   capacity: "12,500",
   league: "Carabao 7-a-side 2026",
   colors: "Navy & Gold",
-  motto: "Forged by the City. United by Pride."
+  motto: "Independent Football Club is more than just a football team, It's a movement. Based In Chiang Mai."
 };
 
 /* ---------- Next fixture (for countdown) ---------- */
