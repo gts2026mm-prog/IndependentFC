@@ -8,6 +8,7 @@
 
   var ADMIN_PASS = "ifc2026";
   var data = null;
+  var dirty = false;
 
   var $ = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
@@ -18,10 +19,67 @@
       .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
 
-  function msg(text, kind) {
-    var el = $("#msg");
+  /* ==================== Toast + dirty tracking ==================== */
+  var toastTimer = null;
+  function toast(text, kind) {
+    var el = $("#toast");
     el.textContent = text;
-    el.className = kind === "err" ? "err" : kind === "ok" ? "ok" : "";
+    el.className = "ad-toast show" + (kind === "err" ? " err" : kind === "ok" ? " ok" : "");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.className = "ad-toast"; }, 3400);
+  }
+
+  function markDirty() {
+    dirty = true;
+    var c = $("#dirtyChip");
+    if (c) { c.classList.add("on"); c.textContent = "Unsaved changes"; }
+  }
+  function clearDirty() {
+    dirty = false;
+    var c = $("#dirtyChip");
+    if (c) { c.classList.remove("on"); c.textContent = "All changes saved"; }
+  }
+
+  function watchDirty() {
+    function onEdit(e) {
+      if (!$("#dashView") || $("#dashView").classList.contains("hidden")) return;
+      var t = e.target;
+      if (t && t.closest("input, select, textarea")) markDirty();
+    }
+    document.addEventListener("input", onEdit);
+    document.addEventListener("change", onEdit);
+  }
+
+  /* ==================== Sidebar navigation ==================== */
+  var PAGE_TITLES = {
+    overview: "Dashboard",
+    club: "Club info",
+    fixture: "Next fixture",
+    latest: "Latest result",
+    fixtures: "Fixtures",
+    results: "Results",
+    table: "League table",
+    squad: "Squad",
+    tiers: "Membership tiers",
+    partner: "Partner",
+    social: "Social links",
+    json: "Raw JSON"
+  };
+
+  function initAdminNav() {
+    $$(".admin-nav__link").forEach(function (a) {
+      a.addEventListener("click", function () {
+        var pane = a.getAttribute("data-pane");
+        if (!pane) return;
+        $$(".admin-nav__link").forEach(function (x) { x.classList.toggle("is-active", x === a); });
+        $$(".admin-pane").forEach(function (p) {
+          p.classList.toggle("is-active", p.getAttribute("data-pane") === pane);
+        });
+        var pt = $("#pageTitle");
+        if (pt) pt.textContent = PAGE_TITLES[pane] || "Dashboard";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    });
   }
 
   /* ==================== Unlock ==================== */
@@ -29,11 +87,23 @@
     if ($("#pass").value === ADMIN_PASS) {
       $("#unlockOverlay").classList.add("hidden");
       $("#dashView").classList.remove("hidden");
+      setActivePane("overview");
       loadData();
     } else {
       $("#pass").value = "";
-      msg("Wrong password.", "err");
+      toast("Wrong password. Try again.", "err");
     }
+  }
+
+  function setActivePane(name) {
+    $$(".admin-nav__link").forEach(function (x) {
+      x.classList.toggle("is-active", x.getAttribute("data-pane") === name);
+    });
+    $$(".admin-pane").forEach(function (p) {
+      p.classList.toggle("is-active", p.getAttribute("data-pane") === name);
+    });
+    var pt = $("#pageTitle");
+    if (pt) pt.textContent = PAGE_TITLES[name] || "Dashboard";
   }
 
   function lock() {
@@ -41,19 +111,20 @@
     $("#unlockOverlay").classList.remove("hidden");
     $("#pass").value = "";
     data = null;
-    msg("", "");
+    clearDirty();
   }
 
   function loadData() {
-    msg("Loading data…");
+    toast("Loading data…");
     fetch("js/data.js").then(function (r) { return r.text(); }).then(function (code) {
       try { eval(code); } catch (e) { /* idempotent assignments */ }
       data = window.IFC || {};
       if (!data.club) throw new Error("data.js did not produce the expected structure");
       renderAll();
-      msg("Data loaded. Edit the forms, then download.", "ok");
+      clearDirty();
+      toast("Data loaded. Edit the forms, then download.", "ok");
     }).catch(function (e) {
-      msg("Could not load js/data.js — " + e.message, "err");
+      toast("Could not load js/data.js — " + e.message, "err");
     });
   }
 
@@ -138,8 +209,7 @@
     renderBoundForm("#socialForm", s, [
       ["facebook", "Facebook URL", "url"], ["tiktok", "TikTok URL", "url"], ["youtube", "YouTube URL", "url"]
     ]);
-    /* Special textarea for the embed code */
-    $("#socialForm").innerHTML += '<div class="field"><label for="b_feedCode">Facebook Feed Embed Code</label><textarea id="b_feedCode" data-bind="feedCode">' + esc(s.feedCode || "") + '</textarea></div>';
+    $("#socialForm").innerHTML += '<div class="field" style="grid-column:1/-1;"><label for="b_feedCode">Facebook Feed Embed Code</label><textarea id="b_feedCode" data-bind="feedCode">' + esc(s.feedCode || "") + '</textarea></div>';
   }
 
   /* ==================== Editable grids ==================== */
@@ -188,18 +258,18 @@
       if (Array.isArray(v)) v = v.join(", ");
       h += cellHTML(f[0], v, f[2]);
     });
-    h += '<td class="tiny"><button class="btn--sm" type="button" data-del>✕</button></td></tr>';
+    h += '<td class="tiny"><button class="ad-btn-icon" type="button" data-del title="Remove row">✕</button></td></tr>';
     return h;
   }
 
   function renderGrid(key) {
     var g = GRIDS[key];
     var rows = data[key] || [];
-    var h = '<table class="grid"><thead><tr>';
+    var h = '<div class="ad-tbl-wrap"><table class="ad-tbl"><thead><tr>';
     g.fields.forEach(function (f) { h += "<th>" + esc(f[1]) + "</th>"; });
     h += '<th></th></tr></thead><tbody id="' + g.tbody + '">';
     rows.forEach(function (r) { h += gridRowHTML(r, g.fields); });
-    h += '</tbody></table><div class="row-actions"><button class="btn btn--sm btn--outline" type="button" data-add-grid="' + key + '">+ Add row</button></div>';
+    h += '</tbody></table></div><div class="ad-row-actions"><button class="btn btn--outline btn--sm" type="button" data-add-grid="' + key + '">+ Add row</button></div>';
     $(g.card).innerHTML = h;
   }
 
@@ -218,6 +288,7 @@
     var tr = document.createElement("tr");
     tr.innerHTML = gridRowHTML(row, g.fields);
     $("#" + tbody).appendChild(tr);
+    markDirty();
   }
 
   function serialGrid(key) {
@@ -245,16 +316,16 @@
   /* ==================== Membership tiers ==================== */
   function renderMembership() {
     var tiers = data.membership || [];
-    var h = '<table class="grid"><thead><tr><th>Tier</th><th>Price</th><th>Per</th><th>Featured</th><th>Features (comma)</th><th></th></tr></thead><tbody id="memBody">';
+    var h = '<div class="ad-tbl-wrap"><table class="ad-tbl"><thead><tr><th>Tier</th><th>Price</th><th>Per</th><th style="width:60px;">Featured</th><th>Features (comma)</th><th></th></tr></thead><tbody id="memBody">';
     tiers.forEach(function (t) {
       h += '<tr><td><input type="text" data-f="name" value="' + esc(t.name) + '"></td>' +
         '<td><input type="text" data-f="price" value="' + esc(t.price) + '"></td>' +
         '<td><input type="text" data-f="per" value="' + esc(t.per || "/ month") + '"></td>' +
-        '<td style="width:36px;"><input type="checkbox" data-f="featured"' + (t.featured ? " checked" : "") + '></td>' +
+        '<td><input type="checkbox" data-f="featured"' + (t.featured ? " checked" : "") + '></td>' +
         '<td><input type="text" data-f="features" value="' + esc((t.features || []).join(", ")) + '"></td>' +
-        '<td class="tiny"><button class="btn--sm" type="button" data-del>✕</button></td></tr>';
+        '<td class="tiny"><button class="ad-btn-icon" type="button" data-del title="Remove row">✕</button></td></tr>';
     });
-    h += '</tbody></table><div class="row-actions"><button class="btn btn--sm btn--outline" type="button" data-add-mem>+ Add tier</button></div>';
+    h += '</tbody></table></div><div class="ad-row-actions"><button class="btn btn--outline btn--sm" type="button" data-add-mem>+ Add tier</button></div>';
     $("#membershipCard").innerHTML = h;
   }
 
@@ -264,10 +335,11 @@
       '<td><input type="text" data-f="name" value=""></td>' +
       '<td><input type="text" data-f="price" value="THB "></td>' +
       '<td><input type="text" data-f="per" value="/ month"></td>' +
-      '<td style="width:36px;"><input type="checkbox" data-f="featured"></td>' +
+      '<td><input type="checkbox" data-f="featured"></td>' +
       '<td><input type="text" data-f="features" value=""></td>' +
-      '<td class="tiny"><button class="btn--sm" type="button" data-del>✕</button></td>';
+      '<td class="tiny"><button class="ad-btn-icon" type="button" data-del title="Remove row">✕</button></td>';
     $("#memBody").appendChild(tr);
+    markDirty();
   }
 
   function serialMembership() {
@@ -284,8 +356,28 @@
     return out;
   }
 
+  /* ==================== Overview ==================== */
+  function renderOverview() {
+    var club = data.club || {};
+    var nf = data.nextFixture || {};
+    $("#ovClubName").textContent = club.name || "Independent FC";
+    $("#ovMotto").textContent = club.motto || "Content manager";
+    var tiles = [
+      { v: club.short || club.name || "—", l: "Club" },
+      { v: nf.opponent || "—", l: "Next match" },
+      { v: (data.squad || []).length + " players", l: "Squad" },
+      { v: (data.fixtures || []).length, l: "Fixtures listed" },
+      { v: (data.results || []).length, l: "Results played" },
+      { v: (data.membership || []).length, l: "Membership tiers" }
+    ];
+    $("#ovStats").innerHTML = tiles.map(function (t) {
+      return '<div class="ad-stat"><b>' + esc(t.v) + '</b><span>' + esc(t.l) + '</span></div>';
+    }).join("");
+  }
+
   /* ==================== Render all ==================== */
   function renderAll() {
+    renderOverview();
     renderBoundForm("#clubForm", data.club || {}, [
       ["name", "Club name", "text"], ["short", "Short", "text"], ["nickname", "Nickname", "text"],
       ["founded", "Founded", "number"], ["stadium", "Stadium", "text"], ["capacity", "Capacity", "text"],
@@ -329,7 +421,7 @@
         if (!parsed || typeof parsed !== "object" || !parsed.club) throw new Error("missing top-level club object");
         data = parsed;
       } catch (e) {
-        msg("Raw JSON is invalid — fix it or clear the box before downloading. (" + e.message + ")", "err");
+        toast("Raw JSON is invalid — fix it or clear the box before downloading. (" + e.message + ")", "err");
         return;
       }
     } else {
@@ -347,20 +439,25 @@
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     ta.dataset.touched = "";
-    msg("data.js downloaded. Send it to the dev to push live, or drop it into D:\\IndependentFC\\js\\data.js.", "ok");
+    clearDirty();
+    toast("data.js downloaded. Send it to the dev to push live, or drop it into D:\\IndependentFC\\js\\data.js.", "ok");
   }
 
   /* ==================== Wire up ==================== */
+  initAdminNav();
+  watchDirty();
   $("#unlockBtn").addEventListener("click", unlock);
   $("#pass").addEventListener("keydown", function (e) { if (e.key === "Enter") unlock(); });
-  $("#downloadBtn").addEventListener("click", download);
+  [$("#downloadBtn"), $("#topDownloadBtn"), $("#heroDownloadBtn")].forEach(function (b) {
+    if (b) b.addEventListener("click", download);
+  });
   $("#lockBtn").addEventListener("click", lock);
   $("#advanced").addEventListener("input", function () { this.dataset.touched = "1"; });
   $("#advLoad").addEventListener("click", function () {
     gatherAll();
     $("#advanced").value = JSON.stringify(data, null, 2);
     $("#advanced").dataset.touched = "1";
-    msg("Raw JSON synced from the forms.", "ok");
+    toast("Raw JSON synced from the forms.", "ok");
   });
   $("#advApply").addEventListener("click", function () {
     try {
@@ -368,9 +465,10 @@
       if (!parsed || typeof parsed !== "object" || !parsed.club) throw new Error("missing club object");
       data = parsed;
       renderAll();
-      msg("Raw JSON applied to the editor.", "ok");
+      clearDirty();
+      toast("Raw JSON applied to the editor.", "ok");
     } catch (e) {
-      msg("Invalid JSON — " + e.message, "err");
+      toast("Invalid JSON — " + e.message, "err");
     }
   });
   document.addEventListener("click", function (ev) {
@@ -379,6 +477,9 @@
     var memBtn = ev.target.closest("[data-add-mem]");
     if (memBtn) addMembershipRow();
     var delBtn = ev.target.closest("[data-del]");
-    if (delBtn) { var tr = delBtn.closest("tr"); if (tr) tr.parentNode.removeChild(tr); }
+    if (delBtn) {
+      var tr = delBtn.closest("tr");
+      if (tr) { tr.parentNode.removeChild(tr); markDirty(); }
+    }
   });
 })();

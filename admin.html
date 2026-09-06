@@ -6,127 +6,253 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Independent FC — Admin</title>
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    body { background: var(--navy-900); }
-    .admin-wrap { max-width: 1100px; margin: 0 auto; padding: 24px 16px 72px; }
-    .muted { color: var(--muted); font-size: 13px; }
-    details.card > summary { cursor: pointer; font-weight: 700; padding: 14px 18px; }
-    .card { margin-bottom: 16px; }
-    table.grid { width: 100%; border-collapse: collapse; font-size: 13px; }
-    table.grid th { text-align: left; padding: 4px 6px; border-bottom: 2px solid rgba(255,255,255,.15); white-space: nowrap; }
-    table.grid td { padding: 3px 4px; vertical-align: middle; }
-    table.grid input, table.grid select { width: 100%; box-sizing: border-box; font: inherit; font-size: 12px; padding: 4px 6px; border: 1px solid rgba(255,255,255,.25); border-radius: 4px; background: rgba(255,255,255,.06); color: #fff; }
-    table.grid input[type="checkbox"] { width: auto; }
-    table.grid td.tiny { width: 30px; }
-    .btn--sm { padding: 4px 10px; font-size: 12px; }
-    .row-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-    .status { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; background: var(--navy-900); border-bottom: 1px solid rgba(255,255,255,.12); padding: 10px 0; margin-bottom: 16px; }
-    #msg { font-size: 13px; min-height: 20px; }
-    #msg.err { color: #ff8f8f; }
-    #msg.ok { color: #8fe0a0; }
-    .unlock-overlay { position: fixed; inset: 0; z-index: 999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.7); }
-    .unlock-card { max-width: 380px; width: 100%; }
-    .hidden { display: none !important; }
-    textarea.code { width: 100%; min-height: 220px; font-family: Consolas, monospace; font-size: 12px; background: rgba(0,0,0,.4); color: #d6f5d6; border: 1px solid rgba(255,255,255,.2); border-radius: 6px; padding: 8px; }
-    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
-    .field input { width: 100%; }
-    @media (max-width: 720px) { .two { grid-template-columns: 1fr; } }
-  </style>
+  <link rel="stylesheet" href="css/admin.css">
 </head>
-<body>
-  <div class="admin-wrap">
+<body class="admin-page">
 
-    <!-- Unlock overlay -->
-    <div id="unlockOverlay" class="unlock-overlay">
-      <div class="card unlock-card">
-        <div class="card__body">
-          <h1>Independent FC — Admin</h1>
-          <p class="muted">Enter the admin password to unlock the editor.</p>
-          <div class="field"><label for="pass">Password</label><input id="pass" type="password" autocomplete="off"></div>
-          <div class="row-actions">
-            <button id="unlockBtn" class="btn btn--gold" type="button">Unlock</button>
-          </div>
-          <p class="muted" style="margin-top:12px;"><a href="index.html" style="color:var(--gold-500);">← Back to the site</a></p>
-        </div>
+  <!-- Unlock overlay -->
+  <div id="unlockOverlay" class="ad-lock">
+    <div class="ad-lock__card">
+      <img class="ad-lock__logo" src="assets/img/crest.png" alt="" onerror="this.style.display='none'">
+      <div class="ad-lock__brand">Independent FC</div>
+      <div class="ad-lock__sub">Admin Panel</div>
+      <p class="ad-lock__hint">Enter the admin password to unlock the editor.</p>
+      <div class="field">
+        <input id="pass" type="password" placeholder="Password" autocomplete="off">
       </div>
-    </div>
-
-    <!-- Dashboard -->
-    <div id="dashView" class="hidden">
-      <div class="status">
-        <div id="msg"></div>
-        <div class="row-actions" style="margin:0;">
-          <a class="btn btn--sm btn--outline" href="index.html" target="_blank" rel="noopener">View site</a>
-          <button id="downloadBtn" class="btn btn--sm btn--gold" type="button">Download data.js</button>
-          <button id="lockBtn" class="btn btn--sm btn--outline" type="button">Lock</button>
-        </div>
-      </div>
-
-      <details class="card" open>
-        <summary>Club info</summary>
-        <div class="card__body two" id="clubForm"></div>
-      </details>
-
-      <details class="card">
-        <summary>Next fixture</summary>
-        <div class="card__body two" id="nextForm"></div>
-      </details>
-
-      <details class="card">
-        <summary>Latest result</summary>
-        <div class="card__body two" id="lateForm"></div>
-      </details>
-
-      <details class="card" open>
-        <summary>Fixtures</summary>
-        <div class="card__body" id="fixturesCard"></div>
-      </details>
-
-      <details class="card">
-        <summary>Results</summary>
-        <div class="card__body" id="resultsCard"></div>
-      </details>
-
-      <details class="card">
-        <summary>League table</summary>
-        <div class="card__body" id="tableCard"></div>
-      </details>
-
-      <details class="card" open>
-        <summary>Squad</summary>
-        <div class="card__body" id="squadCard"></div>
-      </details>
-
-      <details class="card">
-        <summary>Membership tiers</summary>
-        <div class="card__body" id="membershipCard"></div>
-      </details>
-
-      <details class="card">
-        <summary>Partner</summary>
-        <div class="card__body two" id="partnerForm"></div>
-      </details>
-
-      <details class="card">
-        <summary>Social links</summary>
-        <div class="card__body" id="socialForm"></div>
-      </details>
-
-      <details class="card">
-        <summary>Raw JSON (advanced)</summary>
-        <div class="card__body">
-          <p class="muted">Full data object. Edits here override the forms on download.</p>
-          <textarea id="advanced" class="code" spellcheck="false"></textarea>
-          <div class="row-actions">
-            <button id="advLoad" class="btn btn--sm btn--outline" type="button">Sync from forms</button>
-            <button id="advApply" class="btn btn--sm btn--outline" type="button">Apply to editor</button>
-          </div>
-        </div>
-      </details>
-
-      <p class="muted">Download an updated <code>data.js</code> file, then send it to me or drop it into <code>D:\IndependentFC\js\data.js</code> and I'll push it live. Language translations live in <code>js/i18n.js</code> and are edited separately.</p>
+      <button id="unlockBtn" class="btn btn--gold" type="button">Unlock dashboard</button>
+      <a class="ad-lock__back" href="index.html">← Back to the site</a>
     </div>
   </div>
+
+  <!-- Dashboard -->
+  <div id="dashView" class="hidden">
+    <div class="admin">
+      <aside class="admin-sidebar">
+        <div class="admin-brand">
+          <img class="admin-brand__logo" src="assets/img/crest.png" alt="IFC"
+               onerror="this.src='assets/img/players/anime-gk.svg'">
+          <div>
+            <div class="admin-brand__name">Independent FC</div>
+            <div class="admin-brand__sub">Admin Panel</div>
+          </div>
+        </div>
+
+        <nav class="admin-nav" id="adminNav">
+          <div class="admin-nav__title">Overview</div>
+          <button class="admin-nav__link is-active" type="button" data-pane="overview">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/></svg>
+            Dashboard
+          </button>
+
+          <div class="admin-nav__title">Content</div>
+          <button class="admin-nav__link" type="button" data-pane="club">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 3v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V5z"/><path d="M9 12l2 2 4-4"/></svg>
+            Club info
+          </button>
+          <button class="admin-nav__link" type="button" data-pane="fixture">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+            Next fixture
+          </button>
+          <button class="admin-nav__link" type="button" data-pane="latest">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v6a5 5 0 0 1-10 0z"/><path d="M7 6H4v1a4 4 0 0 0 4 4"/><path d="M17 6h3v1a4 4 0 0 1-4 4"/></svg>
+            Latest result
+          </button>
+
+          <div class="admin-nav__title">Lists</div>
+          <button class="admin-nav__link" type="button" data-pane="fixtures">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>
+            Fixtures
+          </button>
+          <button class="admin-nav__link" type="button" data-pane="results">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M7 17v-8M12 17V5M17 17v-7"/></svg>
+            Results
+          </button>
+          <button class="admin-nav__link" type="button" data-pane="table">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h16a0 0 0 0 1 0 0v18a0 0 0 0 1 0 0H4a0 0 0 0 1 0 0V3a0 0 0 0 1 0 0z"/><path d="M4 9h16M4 15h16M10 3v18"/></svg>
+            League table
+          </button>
+          <button class="admin-nav__link" type="button" data-pane="squad">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.2a3.2 3.2 0 0 1 0 5.6"/><path d="M17.5 15.2a5.5 5.5 0 0 1 3 4.8"/></svg>
+            Squad
+          </button>
+          <button class="admin-nav__link" type="button" data-pane="tiers">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Membership
+          </button>
+
+          <div class="admin-nav__title">Settings</div>
+          <button class="admin-nav__link" type="button" data-pane="partner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8 8V7a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1"/><path d="M3 13h18"/></svg>
+            Partner
+          </button>
+          <button class="admin-nav__link" type="button" data-pane="social">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8.7 10.7l6.6-3.4M8.7 13.3l6.6 3.4"/></svg>
+            Social links
+          </button>
+          <button class="admin-nav__link" type="button" data-pane="json">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13 4l-2 16"/></svg>
+            Raw JSON
+          </button>
+        </nav>
+
+        <div class="admin-nav__cta">
+          <a class="btn ad-btn-ghost btn--sm" href="index.html" target="_blank" rel="noopener">
+            <span class="ad-label-sm">↗</span> View site
+          </a>
+          <button id="downloadBtn" class="btn ad-btn-light btn--sm" type="button">
+            <span class="ad-label-sm">⬇</span> Download data.js
+          </button>
+          <button id="lockBtn" class="btn ad-btn-ghost btn--sm" type="button">
+            <span class="ad-label-sm">🔒</span> Lock
+          </button>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-top">
+          <div class="admin-top__left">
+            <h1 id="pageTitle">Dashboard</h1>
+            <span id="dirtyChip" class="ad-chip">All changes saved</span>
+          </div>
+          <div class="admin-top__right">
+            <a class="btn btn--outline btn--sm" href="index.html" target="_blank" rel="noopener">View site</a>
+            <button id="topDownloadBtn" class="btn btn--gold btn--sm" type="button">Download data.js</button>
+          </div>
+        </header>
+
+        <div class="admin-content">
+
+          <section class="admin-pane is-active" data-pane="overview">
+            <div class="ad-hero">
+              <div>
+                <div class="ad-hero__label">Welcome back</div>
+                <h2 id="ovClubName">Independent FC</h2>
+                <p id="ovMotto">Content manager</p>
+              </div>
+              <div class="ad-hero__actions">
+                <a class="btn btn--gold" href="index.html" target="_blank" rel="noopener">View live site</a>
+                <button id="heroDownloadBtn" class="btn ad-btn-light" type="button">Save &amp; download</button>
+              </div>
+            </div>
+            <div class="ad-stats" id="ovStats"></div>
+          </section>
+
+          <section class="admin-pane" data-pane="club">
+            <div class="ad-card">
+              <div class="ad-card__head">
+                <div><h2>Club info</h2><p>Identity, stadium and motto shown across the site.</p></div>
+              </div>
+              <div class="ad-grid" id="clubForm"></div>
+            </div>
+          </section>
+
+          <section class="admin-pane" data-pane="fixture">
+            <div class="ad-card">
+              <div class="ad-card__head">
+                <div><h2>Next fixture</h2><p>Used for the homepage countdown and hero strip.</p></div>
+              </div>
+              <div class="ad-grid" id="nextForm"></div>
+            </div>
+          </section>
+
+          <section class="admin-pane" data-pane="latest">
+            <div class="ad-card">
+              <div class="ad-card__head">
+                <div><h2>Latest result</h2><p>Featured on the homepage hero strip.</p></div>
+              </div>
+              <div class="ad-grid" id="lateForm"></div>
+            </div>
+          </section>
+
+          <section class="admin-pane" data-pane="fixtures">
+            <div class="ad-card">
+              <div class="ad-card__head">
+                <div><h2>Fixtures</h2><p>Upcoming match schedule.</p></div>
+              </div>
+              <div id="fixturesCard"></div>
+            </div>
+          </section>
+
+          <section class="admin-pane" data-pane="results">
+            <div class="ad-card">
+              <div class="ad-card__head">
+                <div><h2>Results</h2><p>Played matches with scorers.</p></div>
+              </div>
+              <div id="resultsCard"></div>
+            </div>
+          </section>
+
+          <section class="admin-pane" data-pane="table">
+            <div class="ad-card">
+              <div class="ad-card__head">
+                <div><h2>League table</h2><p>Standings grid.</p></div>
+              </div>
+              <div id="tableCard"></div>
+            </div>
+          </section>
+
+          <section class="admin-pane" data-pane="squad">
+            <div class="ad-card">
+              <div class="ad-card__head">
+                <div><h2>Squad</h2><p>Player roster. Photos are managed in code.</p></div>
+              </div>
+              <div id="squadCard"></div>
+            </div>
+          </section>
+
+          <section class="admin-pane" data-pane="tiers">
+            <div class="ad-card">
+              <div class="ad-card__head">
+                <div><h2>Membership tiers</h2><p>Pricing cards on the homepage.</p></div>
+              </div>
+              <div id="membershipCard"></div>
+            </div>
+          </section>
+
+          <section class="admin-pane" data-pane="partner">
+            <div class="ad-card">
+              <div class="ad-card__head">
+                <div><h2>Partner</h2><p>Featured sponsor block.</p></div>
+              </div>
+              <div class="ad-grid" id="partnerForm"></div>
+            </div>
+          </section>
+
+          <section class="admin-pane" data-pane="social">
+            <div class="ad-card">
+              <div class="ad-card__head">
+                <div><h2>Social links</h2><p>Footer icons and the Facebook feed embed.</p></div>
+              </div>
+              <div class="ad-grid" id="socialForm"></div>
+            </div>
+          </section>
+
+          <section class="admin-pane" data-pane="json">
+            <div class="ad-card">
+              <div class="ad-card__head">
+                <div><h2>Raw JSON</h2><p>Full data object. Edits here override the forms on download.</p></div>
+              </div>
+              <textarea id="advanced" class="ad-code" spellcheck="false"></textarea>
+              <div class="ad-row-actions">
+                <button id="advLoad" class="btn btn--outline btn--sm" type="button">Sync from forms</button>
+                <button id="advApply" class="btn btn--outline btn--sm" type="button">Apply to editor</button>
+              </div>
+            </div>
+          </section>
+
+          <div class="ad-note">
+            Download an updated <code>data.js</code> file, then send it to the developer or drop it into
+            <code>D:\IndependentFC\js\data.js</code> for it to be pushed live. Language translations live in
+            <code>js/i18n.js</code> and are edited separately.
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast" class="ad-toast" role="status"></div>
 
   <script src="js/admin.js"></script>
 </body>
