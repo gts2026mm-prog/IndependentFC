@@ -63,7 +63,8 @@
     tiers: "Membership tiers",
     partner: "Partner",
     social: "Social links",
-    json: "Raw JSON"
+    json: "Raw JSON",
+    publish: "Publish live"
   };
 
   function initAdminNav() {
@@ -393,6 +394,133 @@
     if (!ta.dataset.touched) ta.value = JSON.stringify(data, null, 2);
   }
 
+  /* ==================== Publish to GitHub ==================== */
+  var publishing = false;
+
+  function b64EncodeUnicode(str) {
+    var bytes = new TextEncoder().encode(str);
+    var bin = "";
+    bytes.forEach(function (b) { bin += String.fromCharCode(b); });
+    return btoa(bin);
+  }
+
+  function getSavedToken() {
+    return localStorage.getItem("ifc_gh_token") || "";
+  }
+
+  function setGhStatus(txt, ok) {
+    var el = $("#ghStatus");
+    if (!el) return;
+    el.textContent = txt;
+    el.className = "field-static" + (ok === true ? " ok" : ok === false ? " err" : "");
+  }
+
+  function initPublish() {
+    $("#ghToken").value = getSavedToken();
+    var repo = localStorage.getItem("ifc_gh_repo");
+    var branch = localStorage.getItem("ifc_gh_branch");
+    if (repo) $("#ghRepo").value = repo;
+    if (branch) $("#ghBranch").value = branch;
+    setGhStatus(getSavedToken() ? "Saved token found. Test it or publish directly." : "Add a GitHub token, then publish.");
+  }
+
+  function testGh() {
+    var token = ($("#ghToken").value || "").trim();
+    if (!token) { setGhStatus("Enter a token first.", false); return; }
+    fetch("https://api.github.com/user", {
+      headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" }
+    }).then(function (r) { return r.json(); }).then(function (u) {
+      if (u && u.login) {
+        setGhStatus("Connected as @" + u.login + " — ready to publish.");
+        toast("Connected as @" + u.login, "ok");
+      } else {
+        setGhStatus("Token rejected by GitHub. Check the token.", false);
+        toast("Token rejected — check the token.", "err");
+      }
+    }).catch(function (e) {
+      setGhStatus("Connection failed: " + e.message, false);
+    });
+  }
+
+  function saveGh() {
+    var token = ($("#ghToken").value || "").trim();
+    if (!token) { setGhStatus("Nothing to save — no token entered.", false); return; }
+    localStorage.setItem("ifc_gh_token", token);
+    localStorage.setItem("ifc_gh_repo", $("#ghRepo").value.trim());
+    localStorage.setItem("ifc_gh_branch", $("#ghBranch").value.trim());
+    setGhStatus("Token saved on this device.");
+    toast("GitHub token saved on this device.", "ok");
+  }
+
+  function clearGh() {
+    localStorage.removeItem("ifc_gh_token");
+    localStorage.removeItem("ifc_gh_repo");
+    localStorage.removeItem("ifc_gh_branch");
+    $("#ghToken").value = "";
+    setGhStatus("Saved token cleared.");
+    toast("Saved token removed.", "ok");
+  }
+
+  function collectReadyData() {
+    var ta = $("#advanced");
+    if (ta.dataset.touched) {
+      var parsed = JSON.parse(ta.value);
+      if (!parsed || typeof parsed !== "object" || !parsed.club) throw new Error("missing top-level club object");
+      data = parsed;
+    } else {
+      gatherAll();
+      ta.value = JSON.stringify(data, null, 2);
+    }
+  }
+
+  function publish() {
+    if (publishing) return;
+    var token = ($("#ghToken").value || "").trim() || getSavedToken();
+    if (!token) {
+      setGhStatus("Add your GitHub token first.", false);
+      toast("Add your GitHub token in the Publish section first.", "err");
+      setActivePane("publish");
+      return;
+    }
+    var repo = ($("#ghRepo").value || "").trim();
+    var branch = ($("#ghBranch").value || "").trim() || "main";
+    if (repo.indexOf("/") === -1) { setGhStatus("Repository should look like owner/name.", false); return; }
+    var content;
+    try { content = collectReadyData(); }
+    catch (e) { setGhStatus(e.message, false); toast(e.message, "err"); return; }
+    var path = "js/data.js";
+    var url = "https://api.github.com/repos/" + repo + "/contents/" + path;
+    var headers = { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" };
+    publishing = true;
+    setGhStatus("Fetching current version…");
+    fetch(url + "?ref=" + encodeURIComponent(branch), { headers: headers })
+      .then(function (r) { return r.json(); })
+      .then(function (existing) {
+        setGhStatus("Publishing changes…");
+        var body = {
+          message: "Update site data from admin panel",
+          content: b64EncodeUnicode(content),
+          branch: branch
+        };
+        if (existing && existing.sha) body.sha = existing.sha;
+        return fetch(url, { method: "PUT", headers: headers, body: JSON.stringify(body) });
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (res && res.message && !res.content) throw new Error(res.message);
+        var sha = (res.content && res.content.sha ? res.content.sha : "").slice(0, 7);
+        setGhStatus("Published to " + repo + " (" + branch + ")" + (sha ? " — commit " + sha : "") + ".", true);
+        clearDirty();
+        publishing = false;
+        toast("Published live! GitHub Pages is rebuilding in a minute.", "ok");
+      })
+      .catch(function (e) {
+        publishing = false;
+        setGhStatus("Publish failed: " + e.message, false);
+        toast("Publish failed — " + e.message, "err");
+      });
+  }
+
   /* ==================== Build & download ==================== */
   function gatherAll() {
     gatherBound($("#clubForm"), data.club || {});
@@ -415,18 +543,11 @@
 
   function download() {
     var ta = $("#advanced");
-    if (ta.dataset.touched) {
-      try {
-        var parsed = JSON.parse(ta.value);
-        if (!parsed || typeof parsed !== "object" || !parsed.club) throw new Error("missing top-level club object");
-        data = parsed;
-      } catch (e) {
-        toast("Raw JSON is invalid — fix it or clear the box before downloading. (" + e.message + ")", "err");
-        return;
-      }
-    } else {
-      gatherAll();
-      ta.value = JSON.stringify(data, null, 2);
+    try {
+      collectReadyData();
+    } catch (e) {
+      toast(e.message, "err");
+      return;
     }
     var content = buildDataFile();
     var blob = new Blob([content], { type: "text/javascript;charset=utf-8" });
@@ -440,18 +561,23 @@
     URL.revokeObjectURL(url);
     ta.dataset.touched = "";
     clearDirty();
-    toast("data.js downloaded. Send it to the dev to push live, or drop it into D:\\IndependentFC\\js\\data.js.", "ok");
+    toast("Backup data.js downloaded. You can also publish it straight to GitHub.", "ok");
   }
 
   /* ==================== Wire up ==================== */
   initAdminNav();
   watchDirty();
+  initPublish();
   $("#unlockBtn").addEventListener("click", unlock);
   $("#pass").addEventListener("keydown", function (e) { if (e.key === "Enter") unlock(); });
-  [$("#downloadBtn"), $("#topDownloadBtn"), $("#heroDownloadBtn")].forEach(function (b) {
-    if (b) b.addEventListener("click", download);
+  [$("#publishSideBtn"), $("#topPublishBtn"), $("#heroPublishBtn"), $("#publishBtn")].forEach(function (b) {
+    if (b) b.addEventListener("click", publish);
   });
+  $("#downloadBackupBtn").addEventListener("click", download);
   $("#lockBtn").addEventListener("click", lock);
+  $("#ghTest").addEventListener("click", testGh);
+  $("#ghSave").addEventListener("click", saveGh);
+  $("#ghClear").addEventListener("click", clearGh);
   $("#advanced").addEventListener("input", function () { this.dataset.touched = "1"; });
   $("#advLoad").addEventListener("click", function () {
     gatherAll();

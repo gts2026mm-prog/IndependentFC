@@ -94,14 +94,18 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13 4l-2 16"/></svg>
             Raw JSON
           </button>
+          <button class="admin-nav__link" type="button" data-pane="publish">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/><path d="M4 21h16"/></svg>
+            Publish live
+          </button>
         </nav>
 
         <div class="admin-nav__cta">
           <a class="btn ad-btn-ghost btn--sm" href="index.html" target="_blank" rel="noopener">
             <span class="ad-label-sm">↗</span> View site
           </a>
-          <button id="downloadBtn" class="btn ad-btn-light btn--sm" type="button">
-            <span class="ad-label-sm">⬇</span> Download data.js
+          <button id="publishSideBtn" class="btn ad-btn-light btn--sm" type="button">
+            <span class="ad-label-sm">⬆</span> Publish live
           </button>
           <button id="lockBtn" class="btn ad-btn-ghost btn--sm" type="button">
             <span class="ad-label-sm">🔒</span> Lock
@@ -117,7 +121,7 @@
           </div>
           <div class="admin-top__right">
             <a class="btn btn--outline btn--sm" href="index.html" target="_blank" rel="noopener">View site</a>
-            <button id="topDownloadBtn" class="btn btn--gold btn--sm" type="button">Download data.js</button>
+            <button id="topPublishBtn" class="btn btn--gold btn--sm" type="button">⬆ Publish live</button>
           </div>
         </header>
 
@@ -132,7 +136,7 @@
               </div>
               <div class="ad-hero__actions">
                 <a class="btn btn--gold" href="index.html" target="_blank" rel="noopener">View live site</a>
-                <button id="heroDownloadBtn" class="btn ad-btn-light" type="button">Save &amp; download</button>
+                <button id="heroPublishBtn" class="btn ad-btn-light" type="button">⬆ Publish changes</button>
               </div>
             </div>
             <div class="ad-stats" id="ovStats"></div>
@@ -237,6 +241,32 @@
               <div class="ad-row-actions">
                 <button id="advLoad" class="btn btn--outline btn--sm" type="button">Sync from forms</button>
                 <button id="advApply" class="btn btn--outline btn--sm" type="button">Apply to editor</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="admin-pane" data-pane="publish">
+            <div class="ad-card">
+              <div class="ad-card__head">
+                <div><h2>Publish live</h2><p>Push changes straight to GitHub — no file download needed. Pages rebuilds automatically.</p></div>
+              </div>
+              <div class="ad-grid" id="publishForm">
+                <div class="field"><label for="ghToken">GitHub token</label><input id="ghToken" type="password" placeholder="ghp_... or github_pat_..." autocomplete="off"></div>
+                <div class="field"><label>Connection status</label><div id="ghStatus" class="field-static">Not connected yet.</div></div>
+                <div class="field"><label for="ghRepo">Repository (owner / name)</label><input id="ghRepo" type="text" value="gts2026mm-prog/IndependentFC"></div>
+                <div class="field"><label for="ghBranch">Branch</label><input id="ghBranch" type="text" value="main"></div>
+              </div>
+              <div class="ad-row-actions">
+                <button id="ghTest" class="btn btn--outline btn--sm" type="button">Test connection</button>
+                <button id="ghSave" class="btn btn--outline btn--sm" type="button">Save token on this device</button>
+                <button id="ghClear" class="btn btn--outline btn--sm" type="button">Clear saved token</button>
+                <button id="publishBtn" class="btn btn--gold btn--sm" type="button">⬆ Publish changes live</button>
+                <button id="downloadBackupBtn" class="btn btn--outline btn--sm" type="button">Download backup copy</button>
+              </div>
+              <div class="ad-note">
+                The token is stored only in this browser (localStorage) and sent only to <code>api.github.com</code>.
+                Use a fine-grained token with <strong>Contents: read &amp; write</strong> on this repo, or a classic token with
+                <strong>repo</strong> scope. Prefer a published source link as your personal-feeds check.
               </div>
             </div>
           </section>

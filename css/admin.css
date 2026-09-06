@@ -244,6 +244,18 @@ body.admin-page {
 }
 .field input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--gold-500); border-radius: 5px; }
 .field textarea { resize: vertical; min-height: 96px; }
+.field-static {
+  font-size: 13.5px;
+  color: var(--muted);
+  background: #f6f8fb;
+  border: 1px dashed var(--line);
+  border-radius: 9px;
+  padding: 10px 12px;
+  min-height: 21px;
+  transition: color .2s;
+}
+.field-static.ok { color: #128a4f; }
+.field-static.err { color: #c23b36; }
 
 /* ---------------- Tables ---------------- */
 .ad-tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
